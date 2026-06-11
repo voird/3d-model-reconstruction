@@ -427,14 +427,18 @@ def build_model(img_size, voxel_size):
     input_images = keras.Input(shape=(img_size, img_size, 3))
 
     x = layers.Conv2D(32, 3, activation='relu', padding='same')(input_images)
+    x = layers.BatchNormalization()(x)
     x = layers.MaxPooling2D(2)(x)
     x = layers.Conv2D(64, 3, activation='relu', padding='same')(x)
+    x = layers.BatchNormalization()(x)
     x = layers.MaxPooling2D(2)(x)
     x = layers.Conv2D(128, 3, activation='relu', padding='same')(x)
     x = layers.MaxPooling2D(2)(x)
     x = layers.Conv2D(256, 3, activation='relu', padding='same')(x)
     x = layers.MaxPooling2D(2)(x)
 
+    x = layers.Dropout(0.3)(x) 
+    x = layers.Flatten()(x)
     x = layers.Flatten()(x)
     
     initial_3d_dim = voxel_size // 8
