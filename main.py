@@ -504,6 +504,20 @@ def combined_loss(y_true, y_pred):
     bce_loss = keras.losses.BinaryCrossentropy(from_logits=False)(y_true, y_pred)
     return bce_loss + dice_loss(y_true, y_pred)
 
+def add_helix(shape, voxel_size):
+    """Добавляет трехмерную спираль."""
+    center_x, center_z = voxel_size // 2, voxel_size // 2
+    turns = np.random.randint(2, 4)
+    for t_val in np.linspace(0, turns * 2 * np.pi, 200):
+        r = 6
+        x = int(center_x + r * np.cos(t_val))
+        z = int(center_z + r * np.sin(t_val))
+        y = int(5 + (t_val / (turns * 2 * np.pi)) * (voxel_size - 10))
+        if 0 <= x < voxel_size and 0 <= y < voxel_size and 0 <= z < voxel_size:
+            shape[x, y, z] = 1.0
+    return shape
+
+
 model = build_model(IMG_SIZE, VOXEL_SIZE)
 model.compile(
     optimizer=keras.optimizers.Adam(learning_rate=LEARNING_RATE),
